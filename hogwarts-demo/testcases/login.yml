@@ -1,0 +1,51 @@
+config:
+    name: create a demo
+    variables:
+        login_email: jeremy8250@gmail.com
+        login_password: 592223
+    base_url: https://www.processon.com/
+    verify: false
+
+teststeps:
+-   name: login
+    variables: {}
+    request:
+        method: POST
+        url: /login
+        headers:
+          Content-Type: "application/x-www-form-urlencoded"
+        data:
+            login_email: $login_email
+            login_password: $login_password
+    validate:
+    - eq:
+        - status_code
+        - 200
+-   name: create flow
+    variables: {}
+    request:
+        method: GET
+        url: /diagraming/new
+        params:
+            category: flow
+    extract:
+        body: "body"
+    validate:
+    - eq:
+        - status_code
+        - 200
+-   name: rename
+    variables:
+        chartId: ${get_chartId($body)}
+    request:
+        method: POST
+        url: /folder/rename/chart
+        headers:
+          Content-Type: "application/x-www-form-urlencoded"
+        data:
+            title: demo1234
+            ignore: title
+            chartId: $chartId
+        validate:
+            - eq: status_code
+            - eq: 200
